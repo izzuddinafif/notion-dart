@@ -28,8 +28,10 @@ Future<Map<String, String>?> getUsers(NotionClient client) async {
     }
     final Users usersObject = usersFromJson(users);
     var user = usersObject.results.firstWhere((r) => r.name.toLowerCase() == 'izzuddin ahmad afif');
-    // printJson(users);
-    print('Fetched user: ${blue(user.name)} with id: ${blue(user.id)}');
+    print('Fetched user: ${blue(user.name)} with id: ${yellow(user.id)}');
+    var user2 = usersObject.results.firstWhere((r) => r.name.toLowerCase().startsWith('devy'));
+    print('Fetched user: ${green(user2.name)} with id: ${red(user2.id)}');
+
     final usersMap = <String, String>{};
     for (final u in usersObject.results) {
       if (u.type == 'bot') continue;
@@ -74,8 +76,13 @@ Future<Map<String, Map<String, dynamic>>?> getPatientPages(NotionClient client) 
   }
 }
 
+String getEnvPath() {
+  final scriptDir = File(Platform.script.toFilePath()).parent.path;
+  return '$scriptDir\\.env';
+}
+
 Future<void> main(List<String> arguments) async {
-  final DotEnv env = DotEnv()..load();
+  final DotEnv env = DotEnv()..load([getEnvPath()]);
   final String? token = env['NOTION_TOKEN'];
   if (token == null || token.isEmpty) {
     throw Exception('NOTION_TOKEN missing from .env');
